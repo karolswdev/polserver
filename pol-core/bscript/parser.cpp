@@ -507,6 +507,8 @@ ObjMember object_members[] = {
     {MBR_PHYSICAL_RESIST_CAP_MOD, "resist_physical_cap_mod", false},
     {MBR_LUCK_MOD, "luck_mod", false},  // 245
     {MBR_HIT_CHANCE_MOD, "hit_chance_mod", false},
+    {MBR_SWING_SPEED_INCREASE, "swing_speed_increase", true},
+    {MBR_SWING_SPEED_INCREASE_MOD, "swing_speed_increase_mod", false},
 
 
 };
