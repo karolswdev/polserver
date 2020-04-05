@@ -67,13 +67,13 @@ jobs:
           $cmake_version = "3.16.2"
           $cmake_archive = "cmake-$cmake_version-Linux-x86_64"
           wget -q "https://github.com/ninja-build/ninja/releases/download/v$ninja_version/ninja-linux.zip"
-          unzip -q ninja-linux.zip -d bin-build
+          unzip -q ninja-linux.zip -d src/bin-build
           wget -q "https://github.com/Kitware/CMake/releases/download/v$cmake_version/$cmake_archive.tar.gz"
           tar -xf "$cmake_archive.tar.gz"
           
-          chmod +x bin-build/ninja
+          chmod +x src/bin-build/ninja
           chmod +x "$cmake_archive/bin/cmake"
-          echo "::add-path::$Env:GITHUB_WORKSPACE/bin-build"
+          echo "::add-path::$Env:GITHUB_WORKSPACE/src/bin-build"
           echo "::add-path::$Env:GITHUB_WORKSPACE/$cmake_archive/bin"
 
       - name: Set CXX and CC
@@ -93,29 +93,29 @@ jobs:
 
       - name: Config
         run: |
-          cd bin-build
+          cd src/bin-build
           cmake .. -G Ninja -DNO_PCH=${{ matrix.config.nopch }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build-type }}
       - name: Build
         run: |
-          cd bin-build
+          cd src/bin-build
           cmake --build . --config ${{ matrix.config.build-type }} -- -j 2
 
       - name: Test
         if: matrix.config.nopch == 0
         run: |
-          cd bin-build
+          cd src/bin-build
           ctest -j2 --output-on-failure --repeat-until-fail 2 -C ${{ matrix.config.build-type }}
       - name: Stylecheck
         if: matrix.config.cxx-compiler == 'g++'
         run: |
-          cd testsuite/style
+          cd src/testsuite/style
           ./checknl.py -q
           ./checkstyle.py -q
 
       - name: Create Artefact
         if: matrix.config.nopch == 0
         run: |
-          cd bin-build
+          cd src/bin-build
           cmake --build . --config ${{ matrix.config.build-type }} --target package
           cd ../bin
           mkdir release
@@ -123,7 +123,7 @@ jobs:
       - name: Create Artefact (dbg)
         if: matrix.config.os == 'ubuntu-latest' && matrix.config.nopch == 0
         run: |
-          cd bin-build
+          cd src/bin-build
           cmake --build . --config ${{ matrix.config.build-type }} --target create_dbg_zip
           cd ../bin
           mv *.zip release
@@ -133,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Nightly-${{ runner.os }}-${{ matrix.config.cxx-compiler }}
-          path: bin/release
+          path: src/bin/release
 
   release:
     needs: build
