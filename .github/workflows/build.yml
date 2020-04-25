@@ -75,17 +75,17 @@ jobs:
 
       - name: Config
         run: |
-          cd bin-build
+          cd pol-core/bin-build
           cmake .. -G Ninja -DNO_PCH=${{ matrix.config.nopch }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build-type }}
       - name: Build
         run: |
-          cd bin-build
+          cd pol-core/bin-build
           cmake --build . --config ${{ matrix.config.build-type }} -- -j 2
 
       - name: Test
         if: matrix.config.nopch == 0
         run: |
-          cd bin-build
+          cd pol-core/bin-build
           ctest -j2 --output-on-failure --repeat-until-fail 2 -C ${{ matrix.config.build-type }}
       - name: Stylecheck
         if: matrix.config.cxx-compiler == 'g++'
@@ -97,7 +97,7 @@ jobs:
       - name: Create Artefact
         if: matrix.config.nopch == 0
         run: |
-          cd bin-build
+          cd pol-core/bin-build
           cmake --build . --config ${{ matrix.config.build-type }} --target package
           cd ../bin
           mkdir release
