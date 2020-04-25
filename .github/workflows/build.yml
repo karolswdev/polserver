@@ -8,13 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - os: "windows-latest"
-            cxx-compiler: cl
-            c-compiler: cl
-            compiler-version: default
-            build-type: Release
-            nopch: 0
-
+          
           - os: "ubuntu-latest"
             cxx-compiler: g++
             c-compiler: gcc
@@ -22,24 +16,12 @@ jobs:
             build-type: RelWithDebInfo
             nopch: 0
 
-          - os: "ubuntu-latest"
-            cxx-compiler: clang++
-            c-compiler: clang
-            compiler-version: 8
-            build-type: RelWithDebInfo
-            nopch: 0
-          
-          - os: "ubuntu-latest"
-            cxx-compiler: clang++
-            c-compiler: clang
-            compiler-version: 8
-            build-type: Release
-            nopch: 1
-
     runs-on: ${{ matrix.config.os }}
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+            ref: 'R2018-02-10-099Final'
       - uses: actions/setup-python@v1
       - uses: seanmiddleditch/gha-setup-vsdevenv@master
       - name: Cache curl
@@ -67,13 +49,13 @@ jobs:
           $cmake_version = "3.16.2"
           $cmake_archive = "cmake-$cmake_version-Linux-x86_64"
           wget -q "https://github.com/ninja-build/ninja/releases/download/v$ninja_version/ninja-linux.zip"
-          unzip -q ninja-linux.zip -d bin-build
+          unzip -q ninja-linux.zip -d pol-core/bin-build
           wget -q "https://github.com/Kitware/CMake/releases/download/v$cmake_version/$cmake_archive.tar.gz"
           tar -xf "$cmake_archive.tar.gz"
           
-          chmod +x bin-build/ninja
+          chmod +x pol-core/bin-build/ninja
           chmod +x "$cmake_archive/bin/cmake"
-          echo "::add-path::$Env:GITHUB_WORKSPACE/bin-build"
+          echo "::add-path::$Env:GITHUB_WORKSPACE/pol-core/bin-build"
           echo "::add-path::$Env:GITHUB_WORKSPACE/$cmake_archive/bin"
 
       - name: Set CXX and CC
